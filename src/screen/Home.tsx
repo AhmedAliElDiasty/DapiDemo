@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   SafeAreaView,
 } from 'react-native';
@@ -7,12 +7,16 @@ import ContentHeader from '../components/content/ContentHeader';
 import ContentHOC from '../provider/ContentHOC';
 
 export default () => {
+  const [startPressed, setStartPressed] = useState(false)
+  const startFetch = () => {
+    setStartPressed(true);
+  }
   return (
     <SafeAreaView>
-      <Start />
+      {!startPressed && <Start handleStart={startFetch} />}
       <AppHeader />
       <ContentHeader />
-      <ContentHOC />
+      <ContentHOC startPressed={ startPressed}/>
     </SafeAreaView>
   )
 }

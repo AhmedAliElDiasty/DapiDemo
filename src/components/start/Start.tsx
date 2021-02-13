@@ -4,12 +4,16 @@ import {
   Text,
   TouchableOpacity
 } from 'react-native';
-import {styles} from './styles'
+import { styles } from './styles'
 
-export default () => {
+interface Props{
+  handleStart: Function;
+}
+
+export default (props:Props) => {
   return (
     <View style={styles.container}>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={()=>{props.handleStart()}}>
         <Text style={styles.textStyle}>Start</Text>
       </TouchableOpacity>
     </View>

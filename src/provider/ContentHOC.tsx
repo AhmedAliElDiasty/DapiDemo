@@ -1,9 +1,49 @@
-import React from 'react';
-import { View } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import ContentList from '../components/content/ContentList';
+import { DataInterface } from '../interfaces/DataInterface';
+import { DataApi } from '../services/DataApi';
+import urlprefix from '../utils/urlprefix';
 
-export default () => {
+interface Props {
+  startPressed: boolean;
+}
+
+export default (props: Props) => {
+  const [data, setData] = useState<DataInterface[]>([])
+  const urls = [
+    "apple.com",
+    "spacex.com",
+    "dapi.co",
+    "facebook.com",
+    "microsoft.com",
+    "amazon.com",
+    "boomsupersonic.com",
+    "twitter.com"
+  ]
+  let tempData: DataInterface[] = [];
+  const completeUrl: string[] = [];
+  urls.forEach((val, index) => completeUrl[index] = `${urlprefix.perfix}${val}`);
+
+  useEffect(() => {
+
+
+    urls.map(item => {
+      tempData.push({ name: item })
+    })
+    setData(tempData);
+  }, [])
+  useEffect(() => {
+    async function getData() {
+      await DataApi(completeUrl).then(res => res.map((item: any, index: number) => {
+        tempData[index] = { name: urls[index], response: item.res?.data, logo: 'https://image.similarpng.com/thumbnail/2020/06/Logo-google-icon-PNG.png' }
+        setData(tempData);
+      }));
+    }
+
+    if (props.startPressed) getData();
+  }, [props.startPressed])
+
   return (
-    <ContentList data={[{name:'Ahmed',response:'2.5 MB',logo:'https://www.google.com/url?sa=i&url=https%3A%2F%2Ftheconversation.com%2Fyes-google-has-a-new-logo-but-why-46976&psig=AOvVaw32wYE-FY-4loyaal6m4F7K&ust=1613230888913000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCMCT38XX5O4CFQAAAAAdAAAAABAD'}]}/>
+    <ContentList data={data} />
   )
 }

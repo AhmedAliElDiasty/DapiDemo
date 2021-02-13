@@ -1,22 +1,26 @@
-import React from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-} from 'react-native';
-import { DataInterface } from '../../interfaces/DataInterface';
+import React, {useEffect, useState} from 'react';
+import {FlatList} from 'react-native';
+import {DataInterface} from '../../interfaces/DataInterface';
 import ContentItem from './ContentItem';
 
 interface Props {
-  data: DataInterface[]
+  data: DataInterface[];
 }
 
+export default (props: Props) => {
+  const [data, setData] = useState(props.data);
+  useEffect(() => {
+    setData(props.data);
+  }, [props.data]);
 
-export default (props: Props) => {  
   return (
     <FlatList
-      data={props.data}
-      renderItem={data => <ContentItem item={data.item} />}
-      />
-  )
-}
+      data={data}
+      renderItem={({item}) => {
+        return <ContentItem item={item} />;
+      }}
+      keyExtractor={(item) => item.name}
+      extraData={data}
+    />
+  );
+};

@@ -1,15 +1,11 @@
 import axios from 'axios';
 import React, { useEffect } from 'react';
-import {
-  View,
-  Text,
-  Image,
-} from 'react-native';
+import { View, Text, Image } from 'react-native';
 import { DataInterface } from '../../interfaces/DataInterface';
-import { styles } from './styles'
+import { styles } from './styles';
 
 interface Props {
-  item: DataInterface
+  item: DataInterface;
 }
 
 export default (props: Props) => {
@@ -17,13 +13,19 @@ export default (props: Props) => {
   return (
     <>
       <View style={styles.itemContainer}>
-        {logo && <Image source={{ uri: logo }} style={styles.image} />}
+        {logo? response ? (
+          <Image source={{ uri: logo }} style={styles.image} />
+        ) : (
+            <Image source={require('../../assets/imgs/error.png')} style={styles.image} />
+          ):null}
         <View>
           <Text style={styles.contentText}>{name}</Text>
-          {response && <Text style={styles.contentDetails}>{response}</Text>}
+          {response && (
+            <Text style={styles.contentDetails}>{response.length}</Text>
+          )}
         </View>
       </View>
       <View style={styles.borderView} />
     </>
-  )
-}
+  );
+};

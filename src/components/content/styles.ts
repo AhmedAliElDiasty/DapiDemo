@@ -28,7 +28,6 @@ export const styles = StyleSheet.create({
     width: 50,
     height: 50,
     resizeMode: 'cover',
-    backgroundColor: 'pink',
     marginRight:10
   },
   contentText: {
