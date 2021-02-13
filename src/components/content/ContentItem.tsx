@@ -21,7 +21,7 @@ export default (props: Props) => {
         <View>
           <Text style={styles.contentText}>{name}</Text>
           {response && (
-            <Text style={styles.contentDetails}>{response.length}</Text>
+            <Text style={styles.contentDetails}>{(response.length/1024).toFixed(1)} KB</Text>
           )}
         </View>
       </View>
