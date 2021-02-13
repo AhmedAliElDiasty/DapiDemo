@@ -9,19 +9,23 @@ interface Props {
 }
 
 export default (props: Props) => {
-  const { logo, response, name } = props.item;
+  const { logo, response, name, status } = props.item;    
+  const renderImage = () => {
+    if (status == 200) return (
+      <Image source={{ uri: logo }} style={styles.image} />
+    )
+    else if (status == 404) return (
+      <Image source={require('../../assets/imgs/error.png')} style={styles.image} />
+    )
+  }
   return (
     <>
       <View style={styles.itemContainer}>
-        {logo? response ? (
-          <Image source={{ uri: logo }} style={styles.image} />
-        ) : (
-            <Image source={require('../../assets/imgs/error.png')} style={styles.image} />
-          ):null}
+        {status && renderImage()}
         <View>
           <Text style={styles.contentText}>{name}</Text>
           {response && (
-            <Text style={styles.contentDetails}>{(response.length/1024).toFixed(1)} KB</Text>
+            <Text style={styles.contentDetails}>{(response/1024).toFixed(1)} KB</Text>
           )}
         </View>
       </View>
