@@ -17,7 +17,7 @@ export default (props: Props) => {
     list.push({ name: item });
   });
   const [data, setData] = useState<DataInterface[]>(list)
-  const run: (requests: string[], responses: any[], index: number) => any = async (
+  const getSynchronizedData: (requests: string[], responses: any[], index: number) => any = async (
     requests,
     responses,
     index,
@@ -48,7 +48,7 @@ export default (props: Props) => {
       };
     } finally {
       setData([...localData])
-      return run(newRequests, responses, ++index);
+      return getSynchronizedData(newRequests, responses, ++index);
     }
   };
 
@@ -56,14 +56,14 @@ export default (props: Props) => {
 
   useEffect(() => {
     async function getData() {
-      await run(completeUrls, [], 0);
+      await getSynchronizedData(completeUrls, [], 0);
 
     }
     if (props.startPressed) getData();
   }, [props.startPressed]);
 
   return (
-    <View style={[styles.container,{height:useWindowDimensions().height}]}>
+    <View style={[styles.container, { height: useWindowDimensions().height }]}>
       <ContentHeader />
       <ContentList data={data} />
     </View>
