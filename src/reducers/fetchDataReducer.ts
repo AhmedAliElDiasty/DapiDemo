@@ -1,7 +1,14 @@
 import { FETCH_DATA } from "../actions/types";
+import { urls } from "../urls/urls";
+
+const list: object[] = []
+
+urls.map((item) => {
+  list.push({name: item});
+});
 
 const initialState = {
-  data: null,
+  data: list,
 };
 interface Action{
   type: string;

@@ -1,52 +1,47 @@
 import axios from 'axios';
-import { FETCH_DATA } from '../actions/types';
-import store from '../store/store'
+import {FETCH_DATA} from '../actions/types';
+import store from '../store/store';
+import perfix from '../utils/perfix';
 
 export const DataApi = async (list: string[]) => {
-  const run: (requests: string[], responses: any[], i?: number) => any = async (
+  let data = store.getState().fetchData.data;
+  const run: (requests: string[], responses: any[], index: number) => any = async (
     requests,
     responses,
-    i = 0,
+    index,
   ) => {
     if (requests.length === 0) {
       return responses;
     }
     const currentRequest = requests[0];
-    const newp = requests.filter((item, index) => {
+    const newRequests = requests.filter((item, index) => {
       return index != 0;
     });
     try {
       const res = await axios.get(currentRequest);
-      if (res.status == 200) {
-        
-        responses.push({ res, i ,status:200});
-        store.dispatch({
-          type: FETCH_DATA,
-          payload: {
-            data: res,
-            index: i,
-            status:200
-          },
-        });
-        return run(newp, responses, ++i);
-      }
-      throw 'data not resolved';
+      data[index] = {
+        name: currentRequest.slice(12),
+        response: res.data.length,
+        index,
+        logo: `${perfix.favPerfix}${currentRequest.slice(12)}`,
+        status: 200,
+      };
     } catch (e) {
+      data[index] = {
+        name: currentRequest.slice(12),
+        index,
+        status: 404,
+      };
+    } finally {
       store.dispatch({
         type: FETCH_DATA,
         payload: {
-          status: 404,
-          index:i
+          data,
         },
-      });      
-      responses.push({
-        res: false,
-        i,
-        status: 404,
       });
-      return run(newp, responses, ++i);
+      return run(newRequests, responses, ++index);
     }
   };
-  const result = run(list, []);
+  const result = run(list, [], 0);
   return result;
 };
