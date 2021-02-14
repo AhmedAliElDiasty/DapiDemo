@@ -7,7 +7,6 @@ export const styles = StyleSheet.create({
     justifyContent:'flex-end',
     paddingHorizontal: 10,
     paddingVertical: 10,
-    marginTop:5,
     height: 40,
     borderBottomWidth: 0.5,
     borderTopWidth: 0.5,

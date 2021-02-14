@@ -1,77 +1,71 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ContentHeader, ContentList } from '../components';
-import { useSelector } from 'react-redux';
-import { completeUrls } from '../urls/urls';
-import axios from 'axios';
-import {FETCH_DATA} from '../actions/types';
-import store from '../store/store';
+import { completeUrls, urls } from '../urls/urls';
 import perfix from '../utils/perfix';
 import { DataApi } from '../services/DataApi';
+import { DataInterface } from '../interfaces/DataInterface';
+import { useWindowDimensions, View } from 'react-native';
+import { styles } from './styles';
 
 interface Props {
   startPressed: boolean;
 }
 
 export default (props: Props) => {
-  const fetchedData: any = useSelector((state) => state);
-  
+  const list: DataInterface[] = []
+  urls.map((item) => {
+    list.push({ name: item });
+  });
+  const [data, setData] = useState<DataInterface[]>(list)
+  const run: (requests: string[], responses: any[], index: number) => any = async (
+    requests,
+    responses,
+    index,
+  ) => {
+    const localData = data
+    if (requests.length === 0) {
+      return responses;
+    }
+    const currentRequest = requests[0];
+    const newRequests = requests.filter((item, index) => {
+      return index != 0;
+    });
+    try {
+      const res = await DataApi(currentRequest);
+      localData[index] = {
+        name: currentRequest.slice(12),
+        response: res.data.length,
+        index,
+        logo: `${perfix.favPerfix}${currentRequest.slice(12)}`,
+        status: 200,
+      };
 
-  const fetchData = async (list: string[]) => {
-    let data = store.getState().fetchData.data;
-    const run: (requests: string[], responses: any[], index: number) => any = async (
-      requests,
-      responses,
-      index,
-    ) => {
-      if (requests.length === 0) {
-        return responses;
-      }
-      const currentRequest = requests[0];
-      const newRequests = requests.filter((item, index) => {
-        return index != 0;
-      });
-      try {
-        const res = await DataApi(currentRequest);
-        data[index] = {
-          name: currentRequest.slice(12),
-          response: res.data.length,
-          index,
-          logo: `${perfix.favPerfix}${currentRequest.slice(12)}`,
-          status: 200,
-        };
-      } catch (e) {
-        data[index] = {
-          name: currentRequest.slice(12),
-          index,
-          status: 404,
-        };
-      } finally {
-        store.dispatch({
-          type: FETCH_DATA,
-          payload: {
-            data,
-          },
-        });
-        return run(newRequests, responses, ++index);
-      }
-    };
-    const result = run(list, [], 0);
-    return result;
+    } catch (e) {
+      localData[index] = {
+        name: currentRequest.slice(12),
+        index,
+        status: 404,
+      };
+    } finally {
+      setData([...localData])
+      return run(newRequests, responses, ++index);
+    }
   };
-  
+
+
 
   useEffect(() => {
     async function getData() {
-      await fetchData(completeUrls);
-      
+      await run(completeUrls, [], 0);
+
     }
     if (props.startPressed) getData();
   }, [props.startPressed]);
 
   return (
-    <>
+    <View style={[styles.container,{height:useWindowDimensions().height}]}>
       <ContentHeader />
-      <ContentList data={fetchedData.fetchData.data} />
-    </>
+      <ContentList data={data} />
+    </View>
   );
 };

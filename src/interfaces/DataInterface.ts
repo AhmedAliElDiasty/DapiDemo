@@ -3,4 +3,5 @@ export interface DataInterface {
   logo?: string;
   response?: number;
   status?: number;
+  index?: number;
 }

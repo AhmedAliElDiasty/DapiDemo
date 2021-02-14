@@ -10,6 +10,7 @@ interface Props {
 export default (props: Props) => {
   return (
     <FlatList
+      contentContainerStyle={{backgroundColor:'white'}}
       data={props.data}
       renderItem={({ item }) => {
         return <ContentItem item={item} />;
